@@ -77,7 +77,8 @@ def save_to_csv(
             item["saved_at"] = timestamp
 
     df = pd.DataFrame(data)
-    df.to_csv(filepath, index=False)
+    # Use QUOTE_ALL to properly handle newlines and special characters in data
+    df.to_csv(filepath, index=False, quoting=csv.QUOTE_ALL, escapechar="\\")
 
     return filepath
 

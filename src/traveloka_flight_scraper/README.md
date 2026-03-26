@@ -14,13 +14,29 @@ A well-structured Python package for scraping flight data from Traveloka.com usi
 
 ### Prerequisites
 
-1. **Start Docker Selenium Server** (from project root):
+#### 1. Create Virtual Environment
+
+It's recommended to create a virtual environment before installing dependencies:
+
+```bash
+# From project root
+python3 -m venv venv
+
+# Activate virtual environment
+# On Linux/macOS:
+source venv/bin/activate
+
+# On Windows:
+venv\Scripts\activate
+```
+
+#### 2. Start Docker Selenium Server
 
 ```bash
 docker-compose up -d
 ```
 
-2. **Install Python Dependencies**:
+#### 3. Install Python Dependencies
 
 ```bash
 # From project root

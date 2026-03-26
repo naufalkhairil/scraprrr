@@ -68,13 +68,15 @@ def save_to_csv(data: List[Dict[str, Any]], filepath: str) -> None:
         filepath: Path to the output CSV file.
     """
     try:
+        import csv
         import pandas as pd
 
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(filepath) if os.path.dirname(filepath) else ".", exist_ok=True)
 
         df = pd.DataFrame(data)
-        df.to_csv(filepath, index=False)
+        # Use QUOTE_ALL to properly handle newlines and special characters in data
+        df.to_csv(filepath, index=False, quoting=csv.QUOTE_ALL, escapechar="\\")
         logger.info(f"Data saved to CSV: {filepath}")
     except Exception as e:
         logger.error(f"Failed to save CSV: {e}")

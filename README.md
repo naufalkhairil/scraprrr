@@ -4,7 +4,23 @@ A collection of web scrapers documented and maintained in one place. This reposi
 
 ## Prerequisites
 
-**Start Docker Selenium Server** (from project root):
+### 1. Create Virtual Environment
+
+It's recommended to create a virtual environment before installing dependencies:
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+# On Linux/macOS:
+source venv/bin/activate
+
+# On Windows:
+venv\Scripts\activate
+```
+
+### 2. Start Docker Selenium Server
 
 ```bash
 docker-compose up -d

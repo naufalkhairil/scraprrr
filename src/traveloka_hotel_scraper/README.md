@@ -19,6 +19,26 @@ A Python package for scraping hotel data from Traveloka.com using Selenium.
 
 ## Installation
 
+### Prerequisites
+
+#### 1. Create Virtual Environment
+
+It's recommended to create a virtual environment before installing dependencies:
+
+```bash
+# From project root
+python3 -m venv venv
+
+# Activate virtual environment
+# On Linux/macOS:
+source venv/bin/activate
+
+# On Windows:
+venv\Scripts\activate
+```
+
+#### 2. Install as Package
+
 Install as part of the scraprrr package:
 
 ```bash
@@ -89,6 +109,10 @@ traveloka-hotel-scraper search Bali --max-hotels 50 --no-scroll
 # Custom output directory
 traveloka-hotel-scraper search Yogyakarta --output-dir ./results
 ```
+
+```bash
+# Basic search (without installing/compiling)
+PYTHONPATH=./src python -m traveloka_hotel_scraper.cli search Jakarta
 
 ### Batch Search
 
@@ -170,9 +194,7 @@ config = HotelScraperConfig(
 )
 ```
 
-## Prerequisites
-
-### Selenium Grid
+#### 3. Start Selenium Grid
 
 Start Docker Selenium server:
 
