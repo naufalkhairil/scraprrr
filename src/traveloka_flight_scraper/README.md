@@ -56,6 +56,11 @@ traveloka-scraper search -o CGK -d DPS --no-scroll
 traveloka-scraper search -o CGK -d DPS --json
 ```
 
+```bash
+# Basic search (without installing/compiling)
+PYTHONPATH=./src python -m traveloka_flight_scraper.cli search --origin CGK --destination DPS
+```
+
 #### Search Multiple Routes
 
 ```bash
@@ -189,6 +194,8 @@ Airport mappings are stored in `mappings/airports.json` at the project root.
 
 ### Default Airports
 
+> List airports below is not align with Traveloka naming
+
 | Code | Name |
 |------|------|
 | CGK | Soekarno Hatta International Airport (Jakarta) |
@@ -265,19 +272,6 @@ pytest tests/test_models.py -v
 
 ## Development
 
-### Code Quality
-
-```bash
-# Format code
-black src/ tests/
-
-# Lint code
-ruff check src/ tests/
-
-# Type checking
-mypy src/
-```
-
 ### Building the Package
 
 ```bash
@@ -289,21 +283,6 @@ pip install -e .
 ```
 
 ## Troubleshooting
-
-### Selenium Connection Issues
-
-If you can't connect to the Selenium server:
-
-```bash
-# Check if Docker container is running
-docker ps | grep selenium
-
-# Restart the container
-docker-compose restart
-
-# Check logs
-docker-compose logs selenium
-```
 
 ### No Results Found
 
