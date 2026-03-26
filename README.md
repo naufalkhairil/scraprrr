@@ -14,8 +14,8 @@ docker-compose up -d
 
 | Scraper | Description | Status |
 |---------|-------------|--------|
-| [Traveloka Flight Scraper](#traveloka-flight-scraper) | Scrapes flight data from Traveloka.com using Selenium | ✅ Active |
-| [Traveloka Hotel Scraper](#traveloka-hotel-scraper) | Scrapes hotel data from Traveloka.com using Selenium | ✅ Active |
+| [Traveloka Flight Scraper](./src/traveloka_flight_scraper/README.md) | Scrapes flight data from Traveloka.com using Selenium | ✅ Active |
+| [Traveloka Hotel Scraper](./src/traveloka_hotel_scraper/README.md) | Scrapes hotel data from Traveloka.com using Selenium | ✅ Active |
 
 ## Troubleshooting
 
