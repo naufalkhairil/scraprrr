@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  selenium:
+    image: selenium/standalone-chrome:latest
+    container_name: selenium-server
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    environment:
+      - SELENIUM_GRID_URL=http://localhost:4444
+      - SE_NODE_SESSION_TIMEOUT=600
+      - SE_SCREEN_WIDTH=1366
+      - SE_SCREEN_HEIGHT=768
+      # Add these Chrome-specific arguments via environment variable
+      - SE_BROWSER_ARGS_CHROME=--disable-dev-shm-usage,--no-sandbox,--disable-gpu,--disable-software-rasterizer,--disable-setuid-sandbox,--window-size=1366,768,--start-maximized
+    shm_size: 2gb  # ✅ Keep this - critical for Chrome stability
+    restart: unless-stopped
+    # Optional: Mount host /dev/shm for even better shared memory access
+    # volumes:
+    #   - /dev/shm:/dev/shm

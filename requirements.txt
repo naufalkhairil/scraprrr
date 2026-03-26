@@ -1,0 +1,13 @@
+# Core dependencies
+selenium>=4.15.0
+pandas>=2.0.0
+pydantic>=2.0.0
+requests>=2.31.0
+
+# Development dependencies (optional)
+# Install with: pip install -r requirements.txt && pip install -e ".[dev]"
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=23.0.0
+ruff>=0.1.0
+mypy>=1.0.0
