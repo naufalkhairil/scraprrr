@@ -81,7 +81,7 @@ traveloka-scraper --help
 #### Search Single Route
 
 ```bash
-# Basic search
+# Basic search (installed package)
 traveloka-scraper search --origin CGK --destination DPS
 
 # With custom output directory
@@ -92,6 +92,11 @@ traveloka-scraper search -o CGK -d DPS --no-scroll
 
 # Enable JSON output in addition to CSV
 traveloka-scraper search -o CGK -d DPS --json
+```
+
+```bash
+# Basic search (without installing/compiling)
+PYTHONPATH=./src python -m traveloka_flight_scraper.cli search --origin CGK --destination DPS
 ```
 
 #### Search Multiple Routes
