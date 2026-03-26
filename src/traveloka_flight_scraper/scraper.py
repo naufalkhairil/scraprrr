@@ -190,7 +190,7 @@ class TravelokaScraper:
                 logger.warning("Proceeding without waiting for loading indicator")
 
             if not results_page.wait_for_results():
-                logger.error("Flight results section not found")
+                logger.error("Flight results section and ticket containers not found")
                 return FlightSearchResult(
                     origin=AirportInfo(code=origin_code, name=origin_name),
                     destination=AirportInfo(

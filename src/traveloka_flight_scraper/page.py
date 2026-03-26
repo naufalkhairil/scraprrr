@@ -331,8 +331,13 @@ class TravelokaResultsPage:
         """
         Wait for flight results to load.
 
+        First tries to wait for _FLIGHT_LIST_SECTION. If not found,
+        continues by checking if any _TICKET_CONTAINER elements are present.
+        This allows scraping to continue even when the expected results
+        section structure is not present.
+
         Returns:
-            True if results are loaded, False if timeout.
+            True if results are loaded (either section or tickets), False if nothing found.
         """
         logger.debug(f"Waiting for flight results (timeout: {self.timeout}s)...")
         try:
@@ -344,8 +349,15 @@ class TravelokaResultsPage:
             logger.info("Flight results section loaded")
             return True
         except TimeoutException:
-            logger.warning("Flight results section not found within timeout")
-            return False
+            logger.warning("Flight results section not found, checking for ticket containers...")
+            # Fallback: check if any ticket containers are present
+            ticket_containers = self.get_ticket_containers()
+            if ticket_containers:
+                logger.info(f"Found {len(ticket_containers)} ticket containers without flight list section")
+                return True
+            else:
+                logger.warning("No ticket containers found either")
+                return False
 
     def get_ticket_containers(self):
         """
