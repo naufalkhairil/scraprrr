@@ -88,3 +88,8 @@ def _add_common_arguments(parser: "argparse.ArgumentParser") -> None:
         default=5.0,
         help="Delay between searches in seconds (default: 5.0)",
     )
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Enable verbose (debug) logging",
+    )

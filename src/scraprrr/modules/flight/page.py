@@ -85,6 +85,7 @@ class FlightPage:
     ) -> bool:
         """Perform flight search."""
         self.dismiss_guest_popup()
+        time.sleep(2)
 
         try:
             # Set departure

@@ -165,6 +165,11 @@ Examples:
         default=5.0,
         help="Delay between searches in seconds (default: 5.0)",
     )
+    batch_parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Enable verbose (debug) logging",
+    )
     batch_parser.set_defaults(
         func=lambda args: cmd_flight_batch(args) if args.type == "flight" else cmd_hotel_batch(args)
     )
@@ -181,7 +186,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         parser.print_help()
         return 0
 
-    setup_logging(verbose=args.verbose)
+    # Get verbose flag from args (may be in subcommand)
+    verbose = getattr(args, 'verbose', False)
+    setup_logging(verbose=verbose)
 
     if args.command == "search":
         if args.search_type is None:

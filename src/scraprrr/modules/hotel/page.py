@@ -22,6 +22,7 @@ class HotelPage:
     URL = "https://www.traveloka.com/en-id/hotel"
 
     _SEARCH_INPUT = "input[placeholder*='city' i], input[placeholder*='hotel' i]"
+    _SUGGESTION_ITEM_NAME = "[data-testid='autocomplete-item-name']"
     _SEARCH_BUTTON = "[data-testid='hotel-search-button']"
     _HOTEL_SECTION = "[data-testid='hotel-results-section']"
     _HOTEL_CONTAINER = "[data-testid^='hotel-card']"
@@ -46,14 +47,18 @@ class HotelPage:
             )
             search_input.clear()
             search_input.send_keys(location)
+            logger.debug(f"Entered location: {location}")
             time.sleep(2)
 
             # Select first suggestion
             try:
-                suggestion = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "[role='option'], div[data-testid*='option']"))
+                suggestion = WebDriverWait(self.driver, self.timeout).until(
+                    EC.element_to_be_clickable(
+                        (By.CSS_SELECTOR, self._SUGGESTION_ITEM_NAME)
+                    )
                 )
                 suggestion.click()
+                logger.debug("Selected autocomplete suggestion")
                 time.sleep(1)
             except TimeoutException:
                 pass
