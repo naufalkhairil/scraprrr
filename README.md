@@ -90,26 +90,42 @@ docker-compose -f docker/selenium-grid/docker-compose.yml up -d
 
 ## CLI Usage
 
-### Unified CLI (Recommended)
+### Running the CLI
+
+You can run the CLI in three ways:
+
+```bash
+# Option 1: Using PYTHONPATH (recommended for development)
+PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS
+
+# Option 2: Using installed package command
+traveloka search flight --origin CGK --destination DPS
+
+# Option 3: Legacy commands (backward compatible)
+traveloka-scraper search --origin CGK --destination DPS
+traveloka-hotel-scraper search Jakarta
+```
+
+### Unified CLI Commands
 
 ```bash
 # Search flights
-traveloka search flight --origin CGK --destination DPS
+PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS
 
 # Search hotels
-traveloka search hotel --location Jakarta
+PYTHONPATH=./src python -m scraprrr.cli.main search hotel --location Jakarta
 
 # Batch search flights
-traveloka search batch --type flight --routes CGK-DPS,SUB-SIN
+PYTHONPATH=./src python -m scraprrr.cli.main search batch --type flight --routes CGK-DPS,SUB-SIN
 
 # Batch search hotels
-traveloka search batch --type hotel --locations Jakarta,Bali,Surabaya
+PYTHONPATH=./src python -m scraprrr.cli.main search batch --type hotel --locations Jakarta,Bali,Surabaya
 
 # Search with custom settings
-traveloka search flight --origin CGK --destination SIN --no-scroll --json
+PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination SIN --no-scroll --json
 
 # Enable verbose logging
-traveloka search flight --origin CGK --destination DPS --verbose
+PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS --verbose
 ```
 
 ### CLI Options
