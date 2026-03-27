@@ -78,9 +78,68 @@ venv\Scripts\activate
 ### 2. Install Dependencies
 
 ```bash
-# Install package in development mode
+# Install package in development mode (recommended)
+pip install -e ".[dev]"
+
+# Or regular installation
+pip install .
+```
+
+## Installation Options
+
+### Install from Local Directory
+
+```bash
+# Clone or navigate to the repository
+cd /path/to/scraprrr
+
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
+# or: venv\Scripts\activate  # Windows
+
+# Install in editable/development mode
 pip install -e ".[dev]"
 ```
+
+### Install from Git Repository
+
+```bash
+# Install directly from GitHub
+pip install git+https://github.com/yourusername/scraprrr.git
+
+# Install with dev dependencies
+pip install "git+https://github.com/yourusername/scraprrr.git#egg=scraprrr[dev]"
+
+# Install from specific branch
+pip install git+https://github.com/yourusername/scraprrr.git@refactor/unified-cli
+```
+
+### Verify Installation
+
+```bash
+# Check package is installed
+pip show scraprrr
+
+# Test CLI
+traveloka --help
+
+# Test import in Python
+python -c "from scraprrr import FlightScraper, HotelScraper; print('✓ Installation successful')"
+```
+
+### Uninstall
+
+```bash
+pip uninstall scraprrr
+```
+
+### Notes
+
+- **Package name**: `scraprrr`
+- **Python version**: Requires Python 3.9+
+- **Dev dependencies**: pytest, pytest-cov, black, ruff, mypy
+- Always activate your virtual environment before using the CLI
 
 ### 3. Start Docker Selenium Server
 
@@ -100,32 +159,28 @@ PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destin
 
 # Option 2: Using installed package command
 traveloka search flight --origin CGK --destination DPS
-
-# Option 3: Legacy commands (backward compatible)
-traveloka-scraper search --origin CGK --destination DPS
-traveloka-hotel-scraper search Jakarta
 ```
 
 ### Unified CLI Commands
 
 ```bash
 # Search flights
-PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS
+traveloka search flight --origin CGK --destination DPS
 
 # Search hotels
-PYTHONPATH=./src python -m scraprrr.cli.main search hotel --location Jakarta
+traveloka search hotel --location Jakarta
 
 # Batch search flights
-PYTHONPATH=./src python -m scraprrr.cli.main search batch --type flight --routes CGK-DPS,SUB-SIN
+traveloka search batch --type flight --routes CGK-DPS,SUB-SIN
 
 # Batch search hotels
-PYTHONPATH=./src python -m scraprrr.cli.main search batch --type hotel --locations Jakarta,Bali,Surabaya
+traveloka search batch --type hotel --locations Jakarta,Bali,Surabaya
 
 # Search with custom settings
-PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination SIN --no-scroll --json
+traveloka search flight --origin CGK --destination SIN --no-scroll --json
 
 # Enable verbose logging
-PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS --verbose
+traveloka search flight --origin CGK --destination DPS --verbose
 ```
 
 ### CLI Options
