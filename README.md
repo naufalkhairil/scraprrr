@@ -164,29 +164,29 @@ You can run the CLI in three ways:
 PYTHONPATH=./src python -m scraprrr.cli.main search flight --origin CGK --destination DPS
 
 # Option 2: Using installed package command
-traveloka search flight --origin CGK --destination DPS
+scraprrr search flight --origin CGK --destination DPS
 ```
 
 ### Unified CLI Commands
 
 ```bash
 # Search flights
-traveloka search flight --origin CGK --destination DPS
+scraprrr search flight --origin CGK --destination DPS
 
 # Search hotels
-traveloka search hotel --location Jakarta
+scraprrr search hotel --location Jakarta
 
 # Batch search flights
-traveloka search batch --type flight --routes CGK-DPS,SUB-SIN
+scraprrr search batch --type flight --routes CGK-DPS,SUB-SIN
 
 # Batch search hotels
-traveloka search batch --type hotel --locations Jakarta,Bali,Surabaya
+scraprrr search batch --type hotel --locations Jakarta,Bali,Surabaya
 
 # Search with custom settings
-traveloka search flight --origin CGK --destination SIN --no-scroll --json
+scraprrr search flight --origin CGK --destination SIN --no-scroll --json
 
 # Enable verbose logging
-traveloka search flight --origin CGK --destination DPS --verbose
+scraprrr search flight --origin CGK --destination DPS --verbose
 ```
 
 ### CLI Options
@@ -219,16 +219,6 @@ traveloka search flight --origin CGK --destination DPS --verbose
 | `--no-scroll` | Disable scrolling (faster, fewer results) |
 | `--no-csv` | Disable CSV output |
 | `--save-json` | Enable JSON output |
-
-### Legacy CLIs (Backward Compatible)
-
-```bash
-# Flight scraper (legacy)
-traveloka-scraper search --origin CGK --destination DPS
-
-# Hotel scraper (legacy)
-traveloka-hotel-scraper search Jakarta
-```
 
 ## Python API
 

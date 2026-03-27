@@ -25,28 +25,28 @@ def setup_logging(verbose: bool = False) -> None:
 def create_parser() -> argparse.ArgumentParser:
     """Create the argument parser for the unified CLI."""
     parser = argparse.ArgumentParser(
-        prog="traveloka",
+        prog="scraprrr",
         description="Unified CLI for Traveloka flight and hotel scraping",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Search flights
-  traveloka search flight --origin CGK --destination DPS
+  scraprrr search flight --origin CGK --destination DPS
 
   # Search hotels
-  traveloka search hotel --location Jakarta
+  scraprrr search hotel --location Jakarta
 
   # Batch search flights
-  traveloka search batch --type flight --routes CGK-DPS,SUB-SIN
+  scraprrr search batch --type flight --routes CGK-DPS,SUB-SIN
 
   # Batch search hotels
-  traveloka search batch --type hotel --locations Jakarta,Bali,Surabaya
+  scraprrr search batch --type hotel --locations Jakarta,Bali,Surabaya
 
   # Search with custom settings
-  traveloka search flight --origin CGK --destination SIN --no-scroll --json
+  scraprrr search flight --origin CGK --destination SIN --no-scroll --json
 
   # Enable verbose logging
-  traveloka search flight --origin CGK --destination DPS --verbose
+  scraprrr search flight --origin CGK --destination DPS --verbose
         """,
     )
 
