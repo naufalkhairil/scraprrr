@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "traveloka-flight-scraper"
-version = "1.0.0"
-description = "A well-structured Python package for scraping flight data from Traveloka.com"
+name = "scraprrr"
+version = "2.0.0"
+description = "A collection of web scrapers for Traveloka.com - flights and hotels"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
@@ -15,10 +15,12 @@ authors = [
 keywords = [
     "traveloka",
     "flight-scraper",
+    "hotel-scraper",
     "selenium",
     "web-scraping",
     "travel",
-    "flights"
+    "flights",
+    "hotels"
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -50,11 +52,14 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/traveloka-flight-scraper"
-Repository = "https://github.com/yourusername/traveloka-flight-scraper.git"
-Issues = "https://github.com/yourusername/traveloka-flight-scraper/issues"
+Homepage = "https://github.com/yourusername/scraprrr"
+Repository = "https://github.com/yourusername/scraprrr.git"
+Issues = "https://github.com/yourusername/scraprrr/issues"
 
 [project.scripts]
+# Unified CLI (recommended)
+traveloka = "traveloka_scraper_common.cli:main"
+# Legacy CLIs (backward compatible)
 traveloka-scraper = "traveloka_flight_scraper.cli:main"
 traveloka-hotel-scraper = "traveloka_hotel_scraper.cli:main"
 

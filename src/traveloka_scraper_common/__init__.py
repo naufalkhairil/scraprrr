@@ -1,12 +1,15 @@
 """
-Utility functions for Traveloka flight scraper.
+Common utilities and shared components for Traveloka scrapers.
 
-This module re-exports shared utilities from traveloka_scraper_common
-and provides flight-specific utility functions.
+This package provides shared functionality used across flight and hotel scrapers:
+- WebDriver management
+- File I/O utilities
+- Common data processing functions
+- Base configuration management
 """
 
+from traveloka_scraper_common.driver import create_driver, quit_driver
 from traveloka_scraper_common.utils import (
-    create_search_summary,
     ensure_directory_exists,
     format_duration_to_minutes,
     generate_output_filename,
@@ -18,6 +21,10 @@ from traveloka_scraper_common.utils import (
 )
 
 __all__ = [
+    # Driver
+    "create_driver",
+    "quit_driver",
+    # Utils
     "generate_output_filename",
     "save_to_csv",
     "save_to_json",
@@ -26,5 +33,4 @@ __all__ = [
     "ensure_directory_exists",
     "parse_price_to_numeric",
     "format_duration_to_minutes",
-    "create_search_summary",
 ]
