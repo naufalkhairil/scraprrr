@@ -114,6 +114,8 @@ class HotelPage:
 
         logger.info(f"Starting scroll to load hotels (target: {num_hotels})")
 
+        # Hotel store variables - outside while loop for threshold check
+        all_containers: List[WebElement] = []
         last_count = 0
         no_change_count = 0
         max_no_change = 3  # Stop if no new hotels loaded after this many scrolls
@@ -126,9 +128,13 @@ class HotelPage:
             scroll_iteration += 1
             logger.debug(f"=== Scroll iteration {scroll_iteration} ===")
 
-            # Count current hotels
-            current_count = len(self.get_hotel_containers())
+            # Get current containers
+            current_containers = self.get_hotel_containers()
+            current_count = len(current_containers)
             logger.debug(f"Current hotel count: {current_count} (previous: {last_count})")
+
+            # Update container list
+            all_containers = current_containers
 
             # Check if threshold reached
             if current_count >= num_hotels:
@@ -184,8 +190,6 @@ class HotelPage:
 
             last_count = new_current_count
 
-        # Get all containers after scrolling complete
-        all_containers = self.get_hotel_containers()
         logger.info(f"Scrolling complete. Total containers collected: {len(all_containers)}")
 
         # Phase 2: Parse all containers at once
