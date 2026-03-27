@@ -32,43 +32,72 @@ class FlightExtractor:
     def extract(self, ticket_container: WebElement) -> Optional[Dict[str, Any]]:
         """Extract ticket information from a flight card container."""
         try:
+            logger.debug("Starting ticket extraction...")
             ticket_info: Dict[str, Any] = {}
 
+            # Extract airline logo
             airline_img = ticket_container.find_element(By.CSS_SELECTOR, self._AIRLINE_LOGO_IMG)
             ticket_info["airline_logo"] = airline_img.get_attribute("src")
+            logger.debug(f"Extracted airline_logo: {ticket_info['airline_logo'][:50] if ticket_info['airline_logo'] else None}...")
 
+            # Extract airline name
             airline_name_elem = ticket_container.find_element(By.CSS_SELECTOR, self._AIRLINE_NAME_DIV)
             ticket_info["airline_name"] = airline_name_elem.text.strip()
+            logger.debug(f"Extracted airline_name: {ticket_info['airline_name']}")
 
+            # Extract baggage
             baggage_elem = ticket_container.find_element(By.CSS_SELECTOR, self._BAGGAGE_SVG)
             ticket_info["baggage"] = baggage_elem.text.strip()
+            logger.debug(f"Extracted baggage: {ticket_info['baggage']}")
 
+            # Extract departure time and airport
             departure_container = ticket_container.find_element(By.CSS_SELECTOR, self._DEPARTURE_CONTAINER)
             departure_elems = departure_container.find_elements(By.CSS_SELECTOR, "div[dir='auto']")
             if len(departure_elems) >= 2:
                 ticket_info["departure_time"] = departure_elems[0].text.strip()
                 ticket_info["departure_airport"] = departure_elems[1].text.strip()
+                logger.debug(f"Extracted departure: {ticket_info['departure_time']} from {ticket_info['departure_airport']}")
 
+            # Extract arrival time and airport
             arrival_container = ticket_container.find_element(By.CSS_SELECTOR, self._ARRIVAL_CONTAINER)
             arrival_elems = arrival_container.find_elements(By.CSS_SELECTOR, "div[dir='auto']")
             if len(arrival_elems) >= 2:
                 ticket_info["arrival_time"] = arrival_elems[0].text.strip()
                 ticket_info["arrival_airport"] = arrival_elems[1].text.strip()
+                logger.debug(f"Extracted arrival: {ticket_info['arrival_time']} to {ticket_info['arrival_airport']}")
 
+            # Extract duration
             duration_elem = ticket_container.find_element(By.CSS_SELECTOR, self._DURATION_DIV)
             ticket_info["duration"] = duration_elem.text.strip()
+            logger.debug(f"Extracted duration: {ticket_info['duration']}")
 
+            # Extract flight type
             flight_type_elem = ticket_container.find_element(By.CSS_SELECTOR, self._FLIGHT_TYPE_DIV)
             ticket_info["flight_type"] = flight_type_elem.text.strip()
+            logger.debug(f"Extracted flight_type: {ticket_info['flight_type']}")
 
+            # Extract price
             price_elem = ticket_container.find_element(By.CSS_SELECTOR, self._PRICE_LABEL)
             ticket_info["price"] = price_elem.text.strip()
+            logger.debug(f"Extracted price: {ticket_info['price']}")
 
+            # Extract original price
             ticket_info["original_price"] = self._extract_original_price(ticket_container)
-            ticket_info["promos"] = self._extract_promos(ticket_container)
-            ticket_info["special_tag"] = self._extract_special_tag(ticket_container)
-            ticket_info["highlight_label"] = self._extract_highlight_label(ticket_container)
+            logger.debug(f"Extracted original_price: {ticket_info['original_price']}")
 
+            # Extract promos
+            ticket_info["promos"] = self._extract_promos(ticket_container)
+            logger.debug(f"Extracted promos: {ticket_info['promos']}")
+
+            # Extract special tag
+            ticket_info["special_tag"] = self._extract_special_tag(ticket_container)
+            logger.debug(f"Extracted special_tag: {ticket_info['special_tag']}")
+
+            # Extract highlight label
+            ticket_info["highlight_label"] = self._extract_highlight_label(ticket_container)
+            logger.debug(f"Extracted highlight_label: {ticket_info['highlight_label']}")
+
+            logger.debug(f"Ticket extraction complete: {ticket_info['airline_name']} - {ticket_info['price']}")
             return ticket_info
 
         except (NoSuchElementException, IndexError) as e:

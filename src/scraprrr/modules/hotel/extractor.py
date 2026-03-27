@@ -33,48 +33,78 @@ class HotelExtractor:
     def extract(self, hotel_container: WebElement) -> Optional[Dict[str, Any]]:
         """Parse hotel information from a hotel card container."""
         try:
+            logger.debug("Starting hotel extraction...")
             hotel_info: Dict[str, Any] = {}
 
+            # Extract hotel name
             hotel_name_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._HOTEL_NAME)
             hotel_info["hotel_name"] = hotel_name_elem.text.strip() if hotel_name_elem else None
+            logger.debug(f"Extracted hotel_name: {hotel_info['hotel_name']}")
 
+            # Extract rating score
             rating_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._RATING_SCORE)
             hotel_info["rating_score"] = rating_elem.text.strip() if rating_elem else None
+            logger.debug(f"Extracted rating_score: {hotel_info['rating_score']}")
 
+            # Extract review count
             review_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._REVIEW_COUNT)
             hotel_info["review_count"] = self._extract_review_count(review_elem) if review_elem else None
+            logger.debug(f"Extracted review_count: {hotel_info['review_count']}")
 
+            # Extract star rating
             star_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._STAR_RATING)
             hotel_info["star_rating"] = self._extract_star_rating(star_elem) if star_elem else None
+            logger.debug(f"Extracted star_rating: {hotel_info['star_rating']}")
 
+            # Extract location
             location_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._LOCATION)
             hotel_info["location"] = location_elem.text.strip() if location_elem else None
+            logger.debug(f"Extracted location: {hotel_info['location']}")
 
+            # Extract main image URL
             main_image_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._MAIN_IMAGE)
             hotel_info["main_image_url"] = main_image_elem.get_attribute("src") if main_image_elem else None
+            logger.debug(f"Extracted main_image_url: {hotel_info['main_image_url'][:50] if hotel_info['main_image_url'] else None}...")
 
+            # Extract supporting images URLs
             hotel_info["supporting_images"] = self._extract_supporting_images(hotel_container)
+            logger.debug(f"Extracted supporting_images: {len(hotel_info['supporting_images'])} images")
 
+            # Extract original price
             original_price_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._ORIGINAL_PRICE)
             hotel_info["original_price"] = original_price_elem.text.strip() if original_price_elem else None
+            logger.debug(f"Extracted original_price: {hotel_info['original_price']}")
 
+            # Extract current price
             price_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._HOTEL_PRICE)
             hotel_info["price"] = price_elem.text.strip() if price_elem else None
+            logger.debug(f"Extracted price: {hotel_info['price']}")
 
+            # Extract total price (with taxes)
             total_price_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._TOTAL_PRICE)
             hotel_info["total_price"] = total_price_elem.text.strip() if total_price_elem else None
+            logger.debug(f"Extracted total_price: {hotel_info['total_price']}")
 
+            # Extract booking info
             booking_info_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._BOOKING_INFO)
             hotel_info["booking_info"] = booking_info_elem.text.strip() if booking_info_elem else None
+            logger.debug(f"Extracted booking_info: {hotel_info['booking_info']}")
 
+            # Extract hotel type
             hotel_type_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._HOTEL_TYPE_BADGE)
             hotel_info["hotel_type"] = hotel_type_elem.text.strip() if hotel_type_elem else None
+            logger.debug(f"Extracted hotel_type: {hotel_info['hotel_type']}")
 
+            # Extract ranking badge
             ranking_elem = self._safe_find(hotel_container, By.CSS_SELECTOR, self._RANKING_BADGE)
             hotel_info["ranking"] = ranking_elem.text.strip() if ranking_elem else None
+            logger.debug(f"Extracted ranking: {hotel_info['ranking']}")
 
+            # Extract features
             hotel_info["features"] = self._extract_features(hotel_container)
+            logger.debug(f"Extracted features: {hotel_info['features']}")
 
+            logger.debug(f"Hotel extraction complete: {hotel_info['hotel_name']} - {hotel_info['price']}")
             return hotel_info
 
         except Exception as e:

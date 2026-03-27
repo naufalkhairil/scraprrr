@@ -114,17 +114,21 @@ class HotelPage:
         """
         from scraprrr.modules.hotel.extractor import HotelExtractor
 
+        logger.info(f"Starting scroll to load hotels (num_scrolls={num_scrolls}, num_hotels={num_hotels})")
+        
         all_hotels: List[Dict[str, Any]] = []
         seen_hotel_keys: set = set()
         last_count = 0
         no_change_count = 0
         max_no_change = 3  # Stop if no new hotels loaded after this many scrolls
+        scroll_iteration = 0
 
         extractor = HotelExtractor()
 
         # Parse initial hotels before any scrolling
-        logger.info("Parsing initial hotels...")
+        logger.info("Parsing initial hotels before scroll...")
         initial_containers = self.get_hotel_containers()
+        logger.debug(f"Found {len(initial_containers)} initial hotel containers")
         initial_hotels = extractor.extract_all(initial_containers)
 
         for hotel in initial_hotels:
@@ -137,18 +141,26 @@ class HotelPage:
         print(f"Initial load: {len(all_hotels)} hotels")
 
         for i in range(num_scrolls):
+            scroll_iteration = i + 1
+            logger.debug(f"=== Scroll iteration {scroll_iteration}/{num_scrolls} ===")
+
             # Check if threshold reached
             if len(all_hotels) > num_hotels:
-                logger.info(f"Threshold {num_hotels} number of hotels reached")
+                logger.info(f"Threshold {num_hotels} hotels reached ({len(all_hotels)} collected)")
                 break
 
             # Scroll to bottom of the window
+            logger.debug("Executing scroll: window.scrollTo(0, document.body.scrollHeight)")
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            logger.debug("Scroll executed successfully")
 
             # Wait for new content to load
+            logger.debug(f"Waiting {scroll_pause}s for new content to load...")
             time.sleep(scroll_pause)
+            logger.debug("Wait complete")
 
             # Wait for network to be idle (helps with lazy-loaded content)
+            logger.debug("Waiting for network idle...")
             try:
                 self.driver.execute_script("""
                     return new Promise((resolve) => {
@@ -165,26 +177,32 @@ class HotelPage:
                         setTimeout(() => resolve(), 1000);
                     });
                 """)
-            except Exception:
+                logger.debug("Network idle wait complete")
+            except Exception as e:
+                logger.debug(f"Network idle wait skipped: {e}")
                 pass  # Continue even if network wait fails
 
             # Count current hotels
             current_count = len(self.get_hotel_containers())
+            logger.debug(f"Current hotel count: {current_count} (previous: {last_count})")
 
             # Check if no new hotels loaded
             if current_count == last_count:
                 no_change_count += 1
+                logger.debug(f"No new hotels loaded (attempt {no_change_count}/{max_no_change})")
                 if no_change_count >= max_no_change:
-                    logger.info(f"No new hotels loaded after {no_change_count} attempts")
+                    logger.info(f"No new hotels loaded after {no_change_count} attempts, stopping scroll")
                     break
             else:
                 no_change_count = 0
-                logger.info(f"Scroll {i+1}/{num_scrolls}: {current_count} hotels visible")
-                print(f"Scroll {i+1}/{num_scrolls}: {current_count} hotels visible")
+                logger.info(f"Scroll {scroll_iteration}/{num_scrolls}: {current_count} hotels visible")
+                print(f"Scroll {scroll_iteration}/{num_scrolls}: {current_count} hotels visible")
 
                 # Parse current visible hotels
+                logger.debug("Parsing current visible hotels...")
                 current_containers = self.get_hotel_containers()
                 current_hotels = extractor.extract_all(current_containers)
+                logger.debug(f"Parsed {len(current_hotels)} hotels from current view")
 
                 # Add only new unique hotels
                 new_count = 0
@@ -194,10 +212,13 @@ class HotelPage:
                         seen_hotel_keys.add(hotel_key)
                         all_hotels.append(hotel)
                         new_count += 1
+                        logger.debug(f"Added new hotel: {hotel_key}")
 
                 if new_count > 0:
                     logger.info(f"Added {new_count} new hotels, total: {len(all_hotels)}")
                     print(f"Added {new_count} new hotels, total: {len(all_hotels)}")
+                else:
+                    logger.debug("No new unique hotels found in this scroll")
 
             last_count = current_count
 
