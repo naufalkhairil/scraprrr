@@ -123,12 +123,6 @@ Examples:
         help="Maximum hotels per location (for hotel searches, default: 100)",
     )
     batch_parser.add_argument(
-        "--num-scrolls",
-        type=int,
-        default=20,
-        help="Maximum scrolls (for hotel searches, default: 20)",
-    )
-    batch_parser.add_argument(
         "--max-tickets",
         type=int,
         default=0,

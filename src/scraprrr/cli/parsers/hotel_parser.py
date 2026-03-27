@@ -20,12 +20,6 @@ def add_hotel_arguments(parser: "argparse.ArgumentParser") -> None:
         default=100,
         help="Maximum number of hotels to collect (default: 100)",
     )
-    parser.add_argument(
-        "--num-scrolls",
-        type=int,
-        default=20,
-        help="Maximum number of scrolls (default: 20)",
-    )
     _add_common_arguments(parser)
 
 
@@ -45,12 +39,6 @@ def add_hotel_batch_arguments(parser: "argparse.ArgumentParser") -> None:
         type=int,
         default=100,
         help="Maximum hotels per location (default: 100)",
-    )
-    parser.add_argument(
-        "--num-scrolls",
-        type=int,
-        default=20,
-        help="Maximum scrolls (default: 20)",
     )
     _add_common_arguments(parser)
 

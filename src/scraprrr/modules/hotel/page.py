@@ -95,7 +95,6 @@ class HotelPage:
     def scroll_to_load_more(
         self,
         scroll_pause: float = 2.0,
-        num_scrolls: int = 20,
         num_hotels: int = 100,
     ) -> List[Dict[str, Any]]:
         """
@@ -106,7 +105,6 @@ class HotelPage:
 
         Args:
             scroll_pause: Time to wait between scrolls in seconds.
-            num_scrolls: Number of times to scroll (default: 20).
             num_hotels: Target number of hotels to collect (default: 100).
 
         Returns:
@@ -114,7 +112,7 @@ class HotelPage:
         """
         from scraprrr.modules.hotel.extractor import HotelExtractor
 
-        logger.info(f"Starting scroll to load hotels (num_scrolls={num_scrolls}, num_hotels={num_hotels})")
+        logger.info("Starting scroll to load hotels...")
         
         all_hotels: List[Dict[str, Any]] = []
         seen_hotel_keys: set = set()
@@ -126,7 +124,7 @@ class HotelPage:
         extractor = HotelExtractor()
 
         # Parse initial hotels before any scrolling
-        logger.info("Parsing initial hotels before scroll...")
+        logger.debug("Parsing initial hotels before scroll...")
         initial_containers = self.get_hotel_containers()
         logger.debug(f"Found {len(initial_containers)} initial hotel containers")
         initial_hotels = extractor.extract_all(initial_containers)
@@ -140,9 +138,10 @@ class HotelPage:
         logger.info(f"Initial load: {len(initial_hotels)} hotels parsed, {len(all_hotels)} unique")
         print(f"Initial load: {len(all_hotels)} hotels")
 
-        for i in range(num_scrolls):
+        i = 0
+        while True:
             scroll_iteration = i + 1
-            logger.debug(f"=== Scroll iteration {scroll_iteration}/{num_scrolls} ===")
+            logger.debug(f"=== Scroll iteration {scroll_iteration} ===")
 
             # Check if threshold reached
             if len(all_hotels) > num_hotels:
@@ -195,8 +194,8 @@ class HotelPage:
                     break
             else:
                 no_change_count = 0
-                logger.info(f"Scroll {scroll_iteration}/{num_scrolls}: {current_count} hotels visible")
-                print(f"Scroll {scroll_iteration}/{num_scrolls}: {current_count} hotels visible")
+                logger.info(f"Scroll {scroll_iteration}: {current_count} hotels visible")
+                print(f"Scroll {scroll_iteration}: {current_count} hotels visible")
 
                 # Parse current visible hotels
                 logger.debug("Parsing current visible hotels...")
@@ -229,7 +228,6 @@ class HotelPage:
         self,
         scroll: bool = True,
         scroll_timeout: int = 60,
-        num_scrolls: int = 20,
         num_hotels: int = 100,
     ) -> List[Dict[str, Any]]:
         """
@@ -243,7 +241,6 @@ class HotelPage:
         Args:
             scroll: Whether to scroll to load more hotels.
             scroll_timeout: Maximum time in seconds to scroll.
-            num_scrolls: Number of times to scroll.
             num_hotels: Target number of hotels to collect.
 
         Returns:
@@ -261,7 +258,6 @@ class HotelPage:
             if scroll:
                 logger.info("Scrolling to load all hotels...")
                 hotels = self.scroll_to_load_more(
-                    num_scrolls=num_scrolls,
                     num_hotels=num_hotels,
                 )
                 return hotels

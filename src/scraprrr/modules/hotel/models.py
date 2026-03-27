@@ -100,7 +100,3 @@ class HotelScraperConfig(BaseScraperConfig):
         default=100,
         description="Maximum hotels to collect (0 for unlimited)",
     )
-    num_scrolls: int = Field(
-        default=20,
-        description="Maximum number of scrolls to perform",
-    )

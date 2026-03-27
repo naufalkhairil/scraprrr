@@ -89,7 +89,6 @@ class HotelScraper(BaseScraper[HotelSearchResult]):
                 raw_hotels = hotel_page.get_all_hotels(
                     scroll=True,
                     scroll_timeout=self.config.scroll_timeout,
-                    num_scrolls=self.config.num_scrolls,
                     num_hotels=self.config.max_hotels,
                 )
             else:
