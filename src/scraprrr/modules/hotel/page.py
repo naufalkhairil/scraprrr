@@ -200,7 +200,7 @@ class HotelPage:
                     break
             else:
                 no_change_count = 0
-                logger.info(f"Scroll {scroll_iteration}: {current_count} hotels visible")
+                logger.debug(f"Scroll {scroll_iteration}: {current_count} hotels visible")
                 print(f"Scroll {scroll_iteration}: {current_count} hotels visible")
 
                 # Parse current hotels with progress bar
@@ -228,7 +228,7 @@ class HotelPage:
                 print()
 
                 if new_count > 0:
-                    logger.info(f"Added {new_count} new hotels, total: {len(all_hotels)}")
+                    logger.debug(f"Added {new_count} new hotels, total: {len(all_hotels)}")
                     print(f"  +{new_count} new hotels (total: {len(all_hotels)})\n")
                 else:
                     print(f"  No new unique hotels\n")

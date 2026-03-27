@@ -104,11 +104,36 @@ class FlightExtractor:
         except NoSuchElementException:
             return None
 
-    def extract_all(self, ticket_containers: List[WebElement]) -> List[Dict[str, Any]]:
-        """Extract information from multiple ticket containers."""
+    def extract_all(self, ticket_containers: List[WebElement], show_progress: bool = True) -> List[Dict[str, Any]]:
+        """Extract information from multiple ticket containers.
+        
+        Args:
+            ticket_containers: List of ticket container WebElements.
+            show_progress: Whether to show progress bar (default: True).
+        
+        Returns:
+            List of extracted ticket information dictionaries.
+        """
+        total = len(ticket_containers)
         tickets = []
-        for container in ticket_containers:
+        
+        if show_progress and total > 0:
+            print(f"  Extracting tickets...")
+        
+        for i, container in enumerate(ticket_containers, 1):
             ticket_info = self.extract(container)
             if ticket_info:
                 tickets.append(ticket_info)
+            
+            # Progress bar
+            if show_progress and total > 0:
+                percent = (i / total) * 100
+                bar_length = 30
+                filled = int(bar_length * i // total)
+                bar = "█" * filled + "─" * (bar_length - filled)
+                print(f"\r  |{bar}| {i}/{total} ({percent:.0f}%) - {len(tickets)} extracted", end="", flush=True)
+        
+        if show_progress and total > 0:
+            print()  # New line after progress bar
+        
         return tickets

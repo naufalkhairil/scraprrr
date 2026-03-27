@@ -180,7 +180,7 @@ class FlightPage:
         import time
 
         logger.info(f"Starting scroll to load tickets (timeout={timeout}s, max_tickets={max_tickets})")
-        
+
         last_count = 0
         no_change_count = 0
         max_no_change = 3
@@ -188,7 +188,7 @@ class FlightPage:
 
         start_time = time.time()
         scroll_container = self._get_scroll_container()
-        
+
         logger.debug(f"Scroll container found: {scroll_container is not None}")
         if scroll_container:
             logger.debug(f"Scroll container tag: {scroll_container.tag_name}")
@@ -198,6 +198,7 @@ class FlightPage:
             elapsed = time.time() - start_time
             if elapsed > timeout:
                 logger.debug(f"Scroll timeout reached after {elapsed:.1f}s")
+                print(f"✗ Timeout: {elapsed:.0f}s elapsed")
                 break
 
             scroll_iteration += 1
@@ -228,6 +229,7 @@ class FlightPage:
             # Check if max_tickets threshold reached
             if max_tickets > 0 and current_count >= max_tickets:
                 logger.info(f"Reached max tickets threshold ({current_count} >= {max_tickets})")
+                print(f"✓ Threshold reached: {current_count} tickets loaded")
                 break
 
             # Check if no new tickets loaded
@@ -236,15 +238,18 @@ class FlightPage:
                 logger.debug(f"No new tickets loaded (attempt {no_change_count}/{max_no_change})")
                 if no_change_count >= max_no_change:
                     logger.info(f"No new tickets after {no_change_count} attempts, stopping scroll")
+                    print(f"✗ No new tickets after {no_change_count} attempts")
                     break
             else:
                 no_change_count = 0
                 logger.info(f"Scroll {scroll_iteration}: Loaded {current_count} tickets")
+                print(f"Scroll {scroll_iteration}: {current_count} tickets visible")
 
             last_count = current_count
 
         final_count = len(self.get_ticket_containers())
         logger.info(f"Scroll complete. Total tickets loaded: {final_count}")
+        print(f"\n✓ Complete: {final_count} tickets loaded")
         return final_count
 
     def _get_scroll_container(self) -> Optional[WebElement]:

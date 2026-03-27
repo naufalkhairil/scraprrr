@@ -169,7 +169,7 @@ class HotelScraper(BaseScraper[HotelSearchResult]):
         if files_saved:
             logger.info(f"Saved {len(files_saved)} file(s)")
             for file_type, file_path in files_saved:
-                logger.info(f"  - {file_type}: {file_path}")
+                logger.debug(f"  - {file_type}: {file_path}")
 
 
 def scrape_hotels(
