@@ -98,10 +98,10 @@ class HotelPage:
         num_hotels: int = 100,
     ) -> List[Dict[str, Any]]:
         """
-        Scroll through the hotel list and parse results incrementally.
+        Scroll through the hotel list to load more hotels, then parse all at once.
 
-        Parses current hotels before each scroll to avoid losing data when elements
-        are recycled during infinite scroll.
+        First collects all hotel containers by scrolling, then parses them
+        after the threshold is reached to avoid repeated parsing during scroll.
 
         Args:
             scroll_pause: Time to wait between scrolls in seconds.
@@ -112,40 +112,28 @@ class HotelPage:
         """
         from scraprrr.modules.hotel.extractor import HotelExtractor
 
-        logger.info("Starting scroll to load hotels...")
-        
-        all_hotels: List[Dict[str, Any]] = []
-        seen_hotel_keys: set = set()
+        logger.info(f"Starting scroll to load hotels (target: {num_hotels})")
+
         last_count = 0
         no_change_count = 0
         max_no_change = 3  # Stop if no new hotels loaded after this many scrolls
         scroll_iteration = 0
 
-        extractor = HotelExtractor()
+        # Phase 1: Scroll to collect containers
+        logger.info("Phase 1: Scrolling to load hotel containers...")
 
-        # Parse initial hotels before any scrolling
-        logger.debug("Parsing initial hotels before scroll...")
-        initial_containers = self.get_hotel_containers()
-        logger.debug(f"Found {len(initial_containers)} initial hotel containers")
-        initial_hotels = extractor.extract_all(initial_containers)
-
-        for hotel in initial_hotels:
-            hotel_key = hotel.get("hotel_name")
-            if hotel_key and hotel_key not in seen_hotel_keys:
-                seen_hotel_keys.add(hotel_key)
-                all_hotels.append(hotel)
-
-        logger.info(f"Initial load: {len(initial_hotels)} hotels parsed, {len(all_hotels)} unique")
-        print(f"Initial load: {len(all_hotels)} hotels")
-
-        i = 0
         while True:
-            scroll_iteration = i + 1
+            scroll_iteration += 1
             logger.debug(f"=== Scroll iteration {scroll_iteration} ===")
 
+            # Count current hotels
+            current_count = len(self.get_hotel_containers())
+            logger.debug(f"Current hotel count: {current_count} (previous: {last_count})")
+
             # Check if threshold reached
-            if len(all_hotels) > num_hotels:
-                logger.info(f"Threshold {num_hotels} hotels reached ({len(all_hotels)} collected)")
+            if current_count >= num_hotels:
+                logger.info(f"Threshold {num_hotels} hotels reached ({current_count} containers loaded)")
+                print(f"Scroll {scroll_iteration}: {current_count} hotels loaded (threshold reached)")
                 break
 
             # Scroll to bottom of the window
@@ -179,49 +167,56 @@ class HotelPage:
                 logger.debug("Network idle wait complete")
             except Exception as e:
                 logger.debug(f"Network idle wait skipped: {e}")
-                pass  # Continue even if network wait fails
-
-            # Count current hotels
-            current_count = len(self.get_hotel_containers())
-            logger.debug(f"Current hotel count: {current_count} (previous: {last_count})")
 
             # Check if no new hotels loaded
-            if current_count == last_count:
+            new_current_count = len(self.get_hotel_containers())
+            if new_current_count == current_count:
                 no_change_count += 1
                 logger.debug(f"No new hotels loaded (attempt {no_change_count}/{max_no_change})")
                 if no_change_count >= max_no_change:
                     logger.info(f"No new hotels loaded after {no_change_count} attempts, stopping scroll")
+                    print(f"Stopping scroll: No new hotels after {no_change_count} attempts")
                     break
             else:
                 no_change_count = 0
-                logger.info(f"Scroll {scroll_iteration}: {current_count} hotels visible")
-                print(f"Scroll {scroll_iteration}: {current_count} hotels visible")
+                logger.info(f"Scroll {scroll_iteration}: {new_current_count} hotels loaded")
+                print(f"Scroll {scroll_iteration}: {new_current_count} hotels loaded")
 
-                # Parse current visible hotels
-                logger.debug("Parsing current visible hotels...")
-                current_containers = self.get_hotel_containers()
-                current_hotels = extractor.extract_all(current_containers)
-                logger.debug(f"Parsed {len(current_hotels)} hotels from current view")
+            last_count = new_current_count
 
-                # Add only new unique hotels
-                new_count = 0
-                for hotel in current_hotels:
-                    hotel_key = hotel.get("hotel_name")
-                    if hotel_key and hotel_key not in seen_hotel_keys:
-                        seen_hotel_keys.add(hotel_key)
-                        all_hotels.append(hotel)
-                        new_count += 1
-                        logger.debug(f"Added new hotel: {hotel_key}")
+        # Get all containers after scrolling complete
+        all_containers = self.get_hotel_containers()
+        logger.info(f"Scrolling complete. Total containers collected: {len(all_containers)}")
 
-                if new_count > 0:
-                    logger.info(f"Added {new_count} new hotels, total: {len(all_hotels)}")
-                    print(f"Added {new_count} new hotels, total: {len(all_hotels)}")
-                else:
-                    logger.debug("No new unique hotels found in this scroll")
+        # Phase 2: Parse all containers at once
+        logger.info(f"Phase 2: Parsing {len(all_containers)} hotel containers...")
+        print(f"Parsing {len(all_containers)} hotels...")
 
-            last_count = current_count
+        extractor = HotelExtractor()
+        all_hotels: List[Dict[str, Any]] = []
+        seen_hotel_keys: set = set()
 
-        logger.info(f"Scrolling complete. Total unique hotels parsed: {len(all_hotels)}")
+        # Parse with progress bar
+        total = len(all_containers)
+        for i, container in enumerate(all_containers, 1):
+            hotel_info = extractor.extract(container)
+            if hotel_info:
+                hotel_key = hotel_info.get("hotel_name")
+                if hotel_key and hotel_key not in seen_hotel_keys:
+                    seen_hotel_keys.add(hotel_key)
+                    all_hotels.append(hotel_info)
+
+            # Progress bar
+            percent = (i / total) * 100
+            bar_length = 40
+            filled_length = int(bar_length * i // total)
+            bar = "█" * filled_length + "-" * (bar_length - filled_length)
+            print(f"\rParsing hotels: |{bar}| {i}/{total} ({percent:.1f}%) - {len(all_hotels)} unique", end="", flush=True)
+
+        print()  # New line after progress bar
+        logger.info(f"Parsing complete. Total unique hotels: {len(all_hotels)}")
+        print(f"Complete: {len(all_hotels)} unique hotels parsed")
+
         return all_hotels
 
     def get_all_hotels(
