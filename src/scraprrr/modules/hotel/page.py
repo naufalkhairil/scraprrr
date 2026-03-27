@@ -126,16 +126,27 @@ class HotelPage:
         # Parse initial hotels before scrolling
         logger.info("Parsing initial hotels...")
         initial_containers = self.get_hotel_containers()
-        initial_hotels = extractor.extract_all(initial_containers)
+        total_initial = len(initial_containers)
+        print(f"Parsing initial hotels...")
 
-        for hotel in initial_hotels:
-            hotel_key = hotel.get("hotel_name")
-            if hotel_key and hotel_key not in seen_hotel_keys:
-                seen_hotel_keys.add(hotel_key)
-                all_hotels.append(hotel)
+        for i, container in enumerate(initial_containers, 1):
+            hotel_info = extractor.extract(container)
+            if hotel_info:
+                hotel_key = hotel_info.get("hotel_name")
+                if hotel_key and hotel_key not in seen_hotel_keys:
+                    seen_hotel_keys.add(hotel_key)
+                    all_hotels.append(hotel_info)
 
+            # Progress bar for initial parsing
+            percent = (i / total_initial) * 100
+            bar_length = 30
+            filled = int(bar_length * i // total_initial)
+            bar = "█" * filled + "─" * (bar_length - filled)
+            print(f"\r  |{bar}| {i}/{total_initial} ({percent:.0f}%) - {len(all_hotels)} unique", end="", flush=True)
+
+        print()
         logger.info(f"Initial load: {len(all_hotels)} unique hotels")
-        print(f"Initial load: {len(all_hotels)} hotels")
+        print(f"Initial: {len(all_hotels)} hotels\n")
 
         # Scroll and parse incrementally
         while True:
@@ -145,7 +156,7 @@ class HotelPage:
             # Check if threshold reached
             if len(all_hotels) >= num_hotels:
                 logger.info(f"Threshold {num_hotels} hotels reached ({len(all_hotels)} collected)")
-                print(f"Threshold reached: {len(all_hotels)} hotels collected")
+                print(f"✓ Threshold reached: {len(all_hotels)} hotels collected")
                 break
 
             # Scroll to bottom
@@ -185,34 +196,47 @@ class HotelPage:
                 logger.debug(f"No change ({no_change_count}/{max_no_change})")
                 if no_change_count >= max_no_change:
                     logger.info(f"Stopping: No new hotels after {no_change_count} attempts")
-                    print(f"Stopping: No new hotels after {no_change_count} attempts")
+                    print(f"✗ Stopping: No new hotels after {no_change_count} attempts")
                     break
             else:
                 no_change_count = 0
                 logger.info(f"Scroll {scroll_iteration}: {current_count} hotels visible")
                 print(f"Scroll {scroll_iteration}: {current_count} hotels visible")
 
-                # Parse current hotels
+                # Parse current hotels with progress bar
                 current_containers = self.get_hotel_containers()
-                current_hotels = extractor.extract_all(current_containers)
-
-                # Add new unique hotels
+                total_current = len(current_containers)
                 new_count = 0
-                for hotel in current_hotels:
-                    hotel_key = hotel.get("hotel_name")
-                    if hotel_key and hotel_key not in seen_hotel_keys:
-                        seen_hotel_keys.add(hotel_key)
-                        all_hotels.append(hotel)
-                        new_count += 1
+
+                print(f"  Parsing hotels...")
+                for i, container in enumerate(current_containers, 1):
+                    hotel_info = extractor.extract(container)
+                    if hotel_info:
+                        hotel_key = hotel_info.get("hotel_name")
+                        if hotel_key and hotel_key not in seen_hotel_keys:
+                            seen_hotel_keys.add(hotel_key)
+                            all_hotels.append(hotel_info)
+                            new_count += 1
+
+                    # Progress bar for current scroll parsing
+                    percent = (i / total_current) * 100
+                    bar_length = 30
+                    filled = int(bar_length * i // total_current)
+                    bar = "█" * filled + "─" * (bar_length - filled)
+                    print(f"\r  |{bar}| {i}/{total_current} ({percent:.0f}%) - {len(all_hotels)} unique", end="", flush=True)
+
+                print()
 
                 if new_count > 0:
                     logger.info(f"Added {new_count} new hotels, total: {len(all_hotels)}")
-                    print(f"Added {new_count} hotels, total: {len(all_hotels)}")
+                    print(f"  +{new_count} new hotels (total: {len(all_hotels)})\n")
+                else:
+                    print(f"  No new unique hotels\n")
 
             last_count = current_count
 
         logger.info(f"Scroll complete. Total unique hotels: {len(all_hotels)}")
-        print(f"Complete: {len(all_hotels)} unique hotels collected")
+        print(f"\n✓ Complete: {len(all_hotels)} unique hotels collected")
 
         return all_hotels
 
