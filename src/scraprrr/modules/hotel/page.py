@@ -100,8 +100,8 @@ class HotelPage:
         """
         Scroll through the hotel list to load more hotels, then parse all at once.
 
-        First collects all hotel containers by scrolling, then parses them
-        after the threshold is reached to avoid repeated parsing during scroll.
+        Accumulates all hotel containers during scrolling, then parses them
+        after the threshold is reached or no more hotels load.
 
         Args:
             scroll_pause: Time to wait between scrolls in seconds.
@@ -114,8 +114,9 @@ class HotelPage:
 
         logger.info(f"Starting scroll to load hotels (target: {num_hotels})")
 
-        # Hotel store variables - outside while loop for threshold check
+        # Hotel store - accumulates containers from all scroll iterations
         all_containers: List[WebElement] = []
+        seen_container_ids: set = set()
         last_count = 0
         no_change_count = 0
         max_no_change = 3  # Stop if no new hotels loaded after this many scrolls
@@ -133,13 +134,22 @@ class HotelPage:
             current_count = len(current_containers)
             logger.debug(f"Current hotel count: {current_count} (previous: {last_count})")
 
-            # Update container list
-            all_containers = current_containers
+            # Append new containers to all_containers (avoid duplicates)
+            new_added = 0
+            for i, container in enumerate(current_containers):
+                # Use element's id or index as unique identifier
+                container_id = id(container)
+                if container_id not in seen_container_ids:
+                    seen_container_ids.add(container_id)
+                    all_containers.append(container)
+                    new_added += 1
+
+            logger.debug(f"Added {new_added} new containers, total: {len(all_containers)}")
 
             # Check if threshold reached
-            if current_count >= num_hotels:
-                logger.info(f"Threshold {num_hotels} hotels reached ({current_count} containers loaded)")
-                print(f"Scroll {scroll_iteration}: {current_count} hotels loaded (threshold reached)")
+            if len(all_containers) >= num_hotels:
+                logger.info(f"Threshold {num_hotels} hotels reached ({len(all_containers)} containers collected)")
+                print(f"Scroll {scroll_iteration}: {len(all_containers)} hotels loaded (threshold reached)")
                 break
 
             # Scroll to bottom of the window
@@ -185,8 +195,8 @@ class HotelPage:
                     break
             else:
                 no_change_count = 0
-                logger.info(f"Scroll {scroll_iteration}: {new_current_count} hotels loaded")
-                print(f"Scroll {scroll_iteration}: {new_current_count} hotels loaded")
+                logger.info(f"Scroll {scroll_iteration}: {new_current_count} hotels visible")
+                print(f"Scroll {scroll_iteration}: {new_current_count} hotels visible")
 
             last_count = new_current_count
 
