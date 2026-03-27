@@ -1,5 +1,7 @@
 # Scraprrr
 
+> **⚠️ Note:** This repository is for **documentation and learning purposes only**. Built with assistance from Qwen Code AI. All scraping activities should comply with Traveloka.com's Terms of Service and robots.txt. Use responsibly and at your own risk.
+
 A collection of web scrapers for Traveloka.com, providing unified CLI and Python API for scraping flight and hotel data.
 
 ## Features
@@ -254,19 +256,6 @@ pytest --cov=scraprrr --cov-report=term-missing
 
 # Run specific test file
 pytest tests/test_flight_*.py -v
-```
-
-### Code Quality
-
-```bash
-# Format code
-black src/ tests/
-
-# Lint code
-ruff check src/ tests/
-
-# Type checking
-mypy src/scraprrr/
 ```
 
 ## Troubleshooting
