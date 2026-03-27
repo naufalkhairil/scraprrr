@@ -1,32 +1,41 @@
 """
-Traveloka Flight Scraper - A well-structured package for scraping flight data from Traveloka.com.
+Backward compatibility layer for traveloka_flight_scraper.
 
-This package provides a modular, maintainable approach to web scraping using Selenium,
-with proper separation of concerns using the Page Object Model pattern.
+This module re-exports from the new scraprrr package structure
+to maintain compatibility with existing code.
 """
 
-from traveloka_flight_scraper.scraper import TravelokaScraper
-from traveloka_flight_scraper.models import (
-    FlightTicket,
-    FlightSearchResult,
+# Re-export models
+from scraprrr.modules.flight.models import (
     AirportInfo,
     FlightInfo,
-)
-from traveloka_flight_scraper.config import (
-    get_airport_name,
-    get_airport_code,
-    ConfigManager,
+    FlightTicket,
+    FlightSearchResult,
+    FlightScraperConfig as ScraperConfig,
 )
 
-__version__ = "1.0.0"
-__author__ = "Your Name"
+# Re-export scraper
+from scraprrr.modules.flight.scraper import FlightScraper as TravelokaScraper
+from scraprrr.modules.flight.scraper import scrape_flights as scrape_traveloka_flights
+from scraprrr.modules.flight.scraper import scrape_flights
+
+# Re-export config
+from scraprrr.core.utils import generate_output_filename, save_to_csv, save_to_json
+
+# Re-export CLI
+from traveloka_flight_scraper.cli import main
+
 __all__ = [
-    "TravelokaScraper",
-    "FlightTicket",
-    "FlightSearchResult",
     "AirportInfo",
     "FlightInfo",
-    "get_airport_name",
-    "get_airport_code",
-    "ConfigManager",
+    "FlightTicket",
+    "FlightSearchResult",
+    "ScraperConfig",
+    "TravelokaScraper",
+    "scrape_traveloka_flights",
+    "scrape_flights",
+    "generate_output_filename",
+    "save_to_csv",
+    "save_to_json",
+    "main",
 ]

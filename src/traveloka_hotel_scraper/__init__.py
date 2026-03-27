@@ -1,65 +1,37 @@
 """
-Traveloka Hotel Scraper - A Python package for scraping hotel data from Traveloka.com.
+Backward compatibility layer for traveloka_hotel_scraper.
 
-This package provides tools to search and extract hotel information from Traveloka,
-including hotel names, prices, ratings, locations, and amenities.
-
-Example usage:
-    ```python
-    from traveloka_hotel_scraper import TravelokaHotelScraper, HotelScraperConfig
-
-    # Create scraper with custom config
-    config = HotelScraperConfig(max_hotels=50, save_csv=True)
-    scraper = TravelokaHotelScraper(config)
-
-    # Search for hotels
-    with scraper:
-        result = scraper.search_hotels("Jakarta")
-        print(f"Found {result.total_results} hotels")
-
-    # Or use convenience function
-    from traveloka_hotel_scraper import scrape_traveloka_hotels
-    result = scrape_traveloka_hotels("Bali")
-    ```
-
-CLI usage:
-    # Search hotels in Jakarta
-    traveloka-hotel-scraper search Jakarta
-
-    # Batch search multiple locations
-    traveloka-hotel-scraper search-batch "Jakarta,Bandung,Surabaya"
+This module re-exports from the new scraprrr package structure
+to maintain compatibility with existing code.
 """
 
-from traveloka_hotel_scraper.driver import create_driver, quit_driver
-from traveloka_hotel_scraper.models import (
+# Re-export models
+from scraprrr.modules.hotel.models import (
     Hotel,
-    HotelLocation,
     HotelSearchResult,
     HotelScraperConfig,
 )
-from traveloka_hotel_scraper.scraper import (
-    TravelokaHotelScraper,
-    scrape_multiple_locations,
-    scrape_traveloka_hotels,
-)
 
-__version__ = "1.0.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+# Re-export scraper
+from scraprrr.modules.hotel.scraper import HotelScraper as TravelokaHotelScraper
+from scraprrr.modules.hotel.scraper import scrape_hotels as scrape_traveloka_hotels
+from scraprrr.modules.hotel.scraper import scrape_hotels
+
+# Re-export config
+from scraprrr.core.utils import generate_output_filename, save_to_csv, save_to_json
+
+# Re-export CLI
+from traveloka_hotel_scraper.cli import main
 
 __all__ = [
-    # Version
-    "__version__",
-    # Models
     "Hotel",
-    "HotelLocation",
     "HotelSearchResult",
     "HotelScraperConfig",
-    # Scraper
     "TravelokaHotelScraper",
     "scrape_traveloka_hotels",
-    "scrape_multiple_locations",
-    # Driver
-    "create_driver",
-    "quit_driver",
+    "scrape_hotels",
+    "generate_output_filename",
+    "save_to_csv",
+    "save_to_json",
+    "main",
 ]
