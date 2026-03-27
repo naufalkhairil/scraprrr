@@ -87,10 +87,12 @@ pip install .
 
 ## Installation Options
 
-### Install from Local Directory
+> **⚠️ Important:** This package is **not published to PyPI**. You must install from the local repository or a Git URL. Running `pip install scraprrr` will fail or install a different package.
+
+### Install from Local Directory (Recommended)
 
 ```bash
-# Clone or navigate to the repository
+# Navigate to the repository root
 cd /path/to/scraprrr
 
 # Create and activate virtual environment
@@ -98,8 +100,11 @@ python3 -m venv venv
 source venv/bin/activate  # Linux/macOS
 # or: venv\Scripts\activate  # Windows
 
-# Install in editable/development mode
+# Install in editable/development mode (recommended)
 pip install -e ".[dev]"
+
+# Or regular installation
+pip install .
 ```
 
 ### Install from Git Repository
@@ -121,7 +126,7 @@ pip install git+https://github.com/yourusername/scraprrr.git@refactor/unified-cl
 # Check package is installed
 pip show scraprrr
 
-# Test CLI
+# Test CLI (must have venv activated)
 traveloka --help
 
 # Test import in Python
@@ -140,6 +145,7 @@ pip uninstall scraprrr
 - **Python version**: Requires Python 3.9+
 - **Dev dependencies**: pytest, pytest-cov, black, ruff, mypy
 - Always activate your virtual environment before using the CLI
+- The `traveloka` command is only available after running `pip install -e .` or `pip install .`
 
 ### 3. Start Docker Selenium Server
 
