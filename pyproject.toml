@@ -58,7 +58,8 @@ Issues = "https://github.com/yourusername/scraprrr/issues"
 
 [project.scripts]
 # Unified CLI (recommended)
-traveloka = "scraprrr.cli:main"
+scraprrr = "scraprrr.cli.main:main"
+traveloka = "scraprrr.cli.main:main"
 # Legacy CLIs (backward compatible)
 traveloka-scraper = "traveloka_flight_scraper.cli:main"
 traveloka-hotel-scraper = "traveloka_hotel_scraper.cli:main"
