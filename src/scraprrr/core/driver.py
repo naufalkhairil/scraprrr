@@ -1,15 +1,11 @@
 """
-Selenium WebDriver management for Traveloka hotel scraping.
+Selenium WebDriver management for Scraprrr.
 
 This module handles the creation and configuration of Chrome WebDriver instances,
 including anti-detection measures and connection to remote Selenium servers.
-
-Reuses the same driver configuration as the flight scraper.
 """
 
 import logging
-from typing import Optional
-
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -29,7 +25,7 @@ def create_driver(remote_url: str = "http://localhost:4444/wd/hub") -> WebDriver
     Returns:
         Configured WebDriver instance.
     """
-    logger.info("Creating Selenium WebDriver instance for hotel scraping...")
+    logger.info("Creating Selenium WebDriver instance...")
     logger.debug(f"Connecting to remote URL: {remote_url}")
 
     chrome_options = Options()

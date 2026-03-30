@@ -1,0 +1,104 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Table sticky header */
+.sticky-top {
+  z-index: 1020 !important;
+}
+
+/* Card hover effect */
+.card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive table wrapper */
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Badge animations */
+.badge {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Form validation */
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+  border-color: #dc3545;
+  background-image: none;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+/* Navbar brand */
+.navbar-brand {
+  font-weight: 600;
+}
+
+/* Tab content */
+.tab-content {
+  padding: 1rem 0;
+}
+
+/* Alert dismissible */
+.alert-dismissible .btn-close {
+  padding: 1rem;
+}
