@@ -2,14 +2,16 @@
 
 > **⚠️ Note:** This repository is for **documentation and learning purposes only**. Built with assistance from Qwen Code AI. All scraping activities should comply with Traveloka.com's Terms of Service and robots.txt. Use responsibly and at your own risk.
 
-A collection of web scrapers for Traveloka.com, providing unified CLI and Python API for scraping flight and hotel data.
+A collection of web scrapers for Traveloka.com, providing unified CLI, Python API, and REST API for scraping flight and hotel data.
 
 ## Features
 
+- **REST API**: FastAPI backend with synchronous and asynchronous endpoints
 - **Unified CLI**: Single command for both flight and hotel scraping
 - **Modular Architecture**: Clean separation between CLI, core, and scraper modules
 - **Type-Safe**: Pydantic models for validated data structures
 - **Backward Compatible**: Legacy package names still work
+- **Job Management**: Background task support with job tracking and cancellation
 
 ## Project Structure
 
@@ -17,6 +19,22 @@ A collection of web scrapers for Traveloka.com, providing unified CLI and Python
 scraprrr/
 ├── src/scraprrr/                 # Main package
 │   ├── __init__.py               # Public API exports
+│   │
+│   ├── api/                      # REST API (FastAPI)
+│   │   ├── __init__.py
+│   │   ├── app.py                # FastAPI application
+│   │   ├── cli.py                # API server CLI
+│   │   ├── core/                 # API core components
+│   │   │   ├── config.py         # API configuration
+│   │   │   ├── job_manager.py    # Background job manager
+│   │   │   └── exceptions.py     # Custom exceptions
+│   │   ├── routes/               # API routes
+│   │   │   ├── __init__.py
+│   │   │   ├── flights.py        # Flight endpoints
+│   │   │   ├── hotels.py         # Hotel endpoints
+│   │   │   └── jobs.py           # Job management endpoints
+│   │   └── schemas/              # Pydantic schemas
+│   │       └── __init__.py       # Request/Response schemas
 │   │
 │   ├── cli/                      # Command-line interface
 │   │   ├── __init__.py
@@ -53,7 +71,10 @@ scraprrr/
 │           └── extractor.py      # Hotel data extractor
 │
 ├── tests/                        # Test suite
-├── docker/selenium-grid/         # Docker Compose for Selenium
+├── docker/
+│   ├── selenium-grid/            # Docker Compose for Selenium
+│   └── api/                      # Docker files for API
+├── examples/                     # Example usage scripts
 ├── mappings/                     # Configuration (airports.json)
 ├── results/                      # Output directory for scraped data
 └── playground/                   # Jupyter notebooks
@@ -354,6 +375,133 @@ docker-compose -f docker/selenium-grid/docker-compose.yml logs selenium
 | Empty CSV output | Enable scrolling: remove `--no-scroll` flag |
 | Timeout errors | Increase `scroll_timeout` in config |
 | Element not found | Website structure may have changed; update selectors |
+
+## REST API
+
+Scraprrr provides a FastAPI-based REST API for programmatic access to flight and hotel scraping.
+
+### Quick Start
+
+```bash
+# Start Selenium Grid
+docker-compose -f docker/selenium-grid/docker-compose.yml up -d
+
+# Start the API server
+scraprrr-serve
+
+# Or with Docker Compose
+docker-compose -f docker/api/docker-compose.yml up -d
+```
+
+### API Endpoints
+
+- **Base URL**: `http://localhost:8000/api/v1`
+- **Interactive Docs**: `http://localhost:8000/docs`
+- **Health Check**: `http://localhost:8000/health`
+
+#### Flight Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/flights/search` | Search flights (synchronous) |
+| POST | `/flights/search/async` | Search flights (asynchronous) |
+| GET | `/flights/job/{job_id}` | Get job status |
+| DELETE | `/flights/job/{job_id}` | Cancel job |
+| GET | `/flights/airports` | List airports |
+
+#### Hotel Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/hotels/search` | Search hotels (synchronous) |
+| POST | `/hotels/search/async` | Search hotels (asynchronous) |
+| GET | `/hotels/job/{job_id}` | Get job status |
+| DELETE | `/hotels/job/{job_id}` | Cancel job |
+| GET | `/hotels/popular-destinations` | List destinations |
+
+#### Job Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/jobs` | List all jobs |
+| GET | `/jobs/{job_id}` | Get job status |
+| DELETE | `/jobs/{job_id}` | Cancel job |
+| POST | `/jobs/cleanup` | Cleanup old jobs |
+| GET | `/jobs/stats` | Get job statistics |
+
+### Example Usage
+
+```python
+import requests
+
+# Search flights synchronously
+response = requests.post(
+    "http://localhost:8000/api/v1/flights/search",
+    json={"origin": "CGK", "destination": "DPS"}
+)
+flights = response.json()
+print(f"Found {flights['total_results']} flights")
+
+# Search hotels asynchronously
+response = requests.post(
+    "http://localhost:8000/api/v1/hotels/search/async",
+    json={"location": "Jakarta"}
+)
+job = response.json()
+job_id = job["job_id"]
+
+# Poll for results
+import time
+while True:
+    response = requests.get(f"http://localhost:8000/api/v1/hotels/job/{job_id}")
+    job = response.json()
+    if job["status"] == "completed":
+        print(f"Found {job['result']['total_results']} hotels")
+        break
+    time.sleep(2)
+```
+
+### Full Documentation
+
+See [API.md](API.md) for complete API documentation, examples, and best practices.
+
+## Web Interface (Frontend)
+
+Scraprrr includes a modern React-based web interface for easy interaction with the scraper.
+
+### Quick Start
+
+```bash
+# Option 1: Development mode
+cd frontend
+npm install
+npm run dev
+# Open http://localhost:3000
+
+# Option 2: Docker (all-in-one)
+docker-compose -f docker-compose.fullstack.yml up -d
+# Frontend: http://localhost:3000
+# API: http://localhost:8000
+# Selenium VNC: http://localhost:7900
+```
+
+### Features
+
+- ✈️ **Flight Search** - Search by origin/destination airports
+- 🏨 **Hotel Search** - Search by location with quick-select destinations
+- 📺 **Live VNC View** - Watch scraping in real-time via embedded Selenium viewer
+- 📊 **Job Monitoring** - Track progress, view history, cancel jobs
+- 📱 **Responsive** - Works on desktop and mobile
+
+### Screenshots
+
+The web interface provides:
+1. **Search Forms** - Easy-to-use flight and hotel search forms
+2. **Job Monitor** - Real-time progress tracking with VNC integration
+3. **Results View** - Tabular display of scraped data
+4. **Job History** - List and manage all scraping jobs
+
+For more details, see [frontend/README.md](frontend/README.md).
 
 ## License
 

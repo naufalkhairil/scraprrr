@@ -1,0 +1,57 @@
+version: '3.8'
+
+# Complete Scraprrr stack - Frontend, API, and Selenium Grid
+# Run with: docker-compose -f docker-compose.fullstack.yml up -d
+
+services:
+  # Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - scraprrr-network
+    restart: unless-stopped
+
+  # Backend API (FastAPI)
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SELENIUM_REMOTE_URL=http://selenium:4444/wd/hub
+    depends_on:
+      - selenium
+    volumes:
+      - ./results:/app/results
+    networks:
+      - scraprrr-network
+    restart: unless-stopped
+
+  # Selenium Grid (Standalone Chrome)
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    environment:
+      - SE_NODE_SESSION_TIMEOUT=60
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_VNC_PASSWORD=secret
+    shm_size: 2gb
+    networks:
+      - scraprrr-network
+    restart: unless-stopped
+
+networks:
+  scraprrr-network:
+    driver: bridge
+
+volumes:
+  results:

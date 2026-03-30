@@ -40,6 +40,9 @@ dependencies = [
     "pandas>=2.0.0",
     "pydantic>=2.0.0",
     "requests>=2.31.0",
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "click>=8.0.0",
 ]
 
 [project.optional-dependencies]
@@ -49,6 +52,8 @@ dev = [
     "black>=23.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",
+    "httpx>=0.26.0",
+    "pytest-asyncio>=0.23.0",
 ]
 
 [project.urls]
@@ -60,6 +65,8 @@ Issues = "https://github.com/yourusername/scraprrr/issues"
 # Unified CLI (recommended)
 scraprrr = "scraprrr.cli.main:main"
 traveloka = "scraprrr.cli.main:main"
+# API Server
+scraprrr-serve = "scraprrr.api.cli:main"
 # Legacy CLIs (backward compatible)
 traveloka-scraper = "traveloka_flight_scraper.cli:main"
 traveloka-hotel-scraper = "traveloka_hotel_scraper.cli:main"
@@ -125,4 +132,4 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=traveloka_flight_scraper --cov-report=term-missing"
+addopts = "-v"
