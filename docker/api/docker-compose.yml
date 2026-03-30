@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Scraprrr API
+  api:
+    build:
+      context: ../../
+      dockerfile: docker/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SELENIUM_REMOTE_URL=http://selenium:4444/wd/hub
+    depends_on:
+      - selenium
+    volumes:
+      - ../../results:/app/results
+    networks:
+      - scraprrr-network
+
+  # Selenium Hub
+  selenium:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    environment:
+      - SE_NODE_SESSION_TIMEOUT=60
+      - SE_NODE_MAX_SESSIONS=5
+    shm_size: 2gb
+    networks:
+      - scraprrr-network
+
+networks:
+  scraprrr-network:
+    driver: bridge

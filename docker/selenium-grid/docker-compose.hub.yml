@@ -1,0 +1,55 @@
+services:
+  # Central Selenium Grid Hub
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4444:4444"   # Main Grid endpoint
+      - "4442:4442"   # Event bus
+      - "4443:4443"   # Distribution
+    environment:
+      - GRID_TIMEOUT=600
+      - GRID_BROWSER_TIMEOUT=600
+    restart: unless-stopped
+
+  # Chrome Node 1
+  selenium-node-1:
+    image: selenium/node-chrome:latest
+    container_name: selenium-chrome-1
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_SESSION_TIMEOUT=600
+      - SE_SCREEN_WIDTH=1366
+      - SE_SCREEN_HEIGHT=768
+      - SE_VNC_PASSWORD=secret
+      - SE_BROWSER_ARGS_CHROME=--disable-dev-shm-usage,--no-sandbox,--disable-gpu,--disable-software-rasterizer,--disable-setuid-sandbox,--window-size=1366,768,--start-maximized
+      - SE_VNC_PORT=7900
+    ports:
+      - "7900:7900"   # VNC for debugging (optional)
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    restart: unless-stopped
+
+  # Chrome Node 2
+  selenium-node-2:
+    image: selenium/node-chrome:latest
+    container_name: selenium-chrome-2
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_SESSION_TIMEOUT=600
+      - SE_SCREEN_WIDTH=1366
+      - SE_SCREEN_HEIGHT=768
+      - SE_VNC_PASSWORD=secret
+      - SE_BROWSER_ARGS_CHROME=--disable-dev-shm-usage,--no-sandbox,--disable-gpu,--disable-software-rasterizer,--disable-setuid-sandbox,--window-size=1366,768,--start-maximized
+      - SE_VNC_PORT=7901
+    ports:
+      - "7901:7901"   # VNC for debugging (optional)
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    restart: unless-stopped
